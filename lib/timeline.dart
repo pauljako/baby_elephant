@@ -168,7 +168,8 @@ class _TimelinePageState extends State<TimelinePage> {
                                               height: 18)))),
                             ]),
                             const SizedBox(width: 5),
-                            Column(
+                            Expanded(
+                                child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Visibility(
@@ -204,13 +205,14 @@ class _TimelinePageState extends State<TimelinePage> {
                                         fontWeight: FontWeight.bold)),
                                 Text(
                                   widget.statuses[i].reblog != null
-                                      ? "@${widget.statuses[i].reblog!.account.username}"
-                                      : "@${widget.statuses[i].account.username}",
+                                      ? "@${widget.statuses[i].reblog!.account.acct}"
+                                      : "@${widget.statuses[i].account.acct}",
                                   style: const TextStyle(color: Colors.grey),
                                   textAlign: TextAlign.left,
+                                  overflow: TextOverflow.ellipsis,
                                 )
                               ],
-                            )
+                            ))
                           ],
                         ),
                         const SizedBox(height: 10),

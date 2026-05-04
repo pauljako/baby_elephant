@@ -6,7 +6,13 @@
 
     <!-- Flags the app as a Wear app -->
     <uses-feature android:name="android.hardware.type.watch" />
-
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.BROWSABLE" />
+            <data android:scheme="https" />
+        </intent>
+    </queries>
    <application
         android:label="Baby Elephant"
         android:name="${applicationName}"

@@ -18,20 +18,23 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
-import 'package:mastodon_api/mastodon_api.dart' as mApi;
-import 'package:wearable_rotary/wearable_rotary.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:mastodon_api/mastodon_api.dart' as mApi;
+import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:wearable_rotary/wearable_rotary.dart';
 
 class TimelinePage extends StatefulWidget {
   final mApi.MastodonApi mastodon;
   final List<mApi.Status> statuses;
   final String timeline;
+
   const TimelinePage(
       {super.key,
       required this.mastodon,
       required this.statuses,
       required this.timeline});
+
   @override
   State<TimelinePage> createState() => _TimelinePageState();
 }
@@ -212,13 +215,26 @@ class _TimelinePageState extends State<TimelinePage> {
                         ),
                         const SizedBox(height: 10),
                         Center(
-                            child: HtmlWidget(widget.statuses[i].reblog != null
-                                ? widget.statuses[i].reblog!.spoilerText != ""
-                                    ? widget.statuses[i].reblog!.spoilerText
-                                    : widget.statuses[i].reblog!.content
-                                : widget.statuses[i].spoilerText != ""
-                                    ? widget.statuses[i].spoilerText
-                                    : widget.statuses[i].content)),
+                            child: HtmlWidget(
+                                widget.statuses[i].reblog != null
+                                    ? widget.statuses[i].reblog!.spoilerText !=
+                                            ""
+                                        ? widget.statuses[i].reblog!.spoilerText
+                                        : widget.statuses[i].reblog!.content
+                                    : widget.statuses[i].spoilerText != ""
+                                        ? widget.statuses[i].spoilerText
+                                        : widget.statuses[i].content,
+                                onTapUrl: (url) async {
+                          if (await canLaunchUrl(Uri.parse(url))) {
+                            Fluttertoast.showToast(
+                                msg: "Opening $url",
+                                gravity: ToastGravity.BOTTOM);
+                            await launchUrl(Uri.parse(url));
+                            return true;
+                          } else {
+                            return false;
+                          }
+                        })),
                         Visibility(
                             visible: (widget.statuses[i].spoilerText != "" ||
                                     (widget.statuses[i].reblog != null &&

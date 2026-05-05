@@ -218,25 +218,47 @@ class _TimelinePageState extends State<TimelinePage> {
                         const SizedBox(height: 10),
                         Center(
                             child: HtmlWidget(
-                                widget.statuses[i].reblog != null
-                                    ? widget.statuses[i].reblog!.spoilerText !=
-                                            ""
-                                        ? widget.statuses[i].reblog!.spoilerText
-                                        : widget.statuses[i].reblog!.content
-                                    : widget.statuses[i].spoilerText != ""
-                                        ? widget.statuses[i].spoilerText
-                                        : widget.statuses[i].content,
-                                onTapUrl: (url) async {
-                          if (await canLaunchUrl(Uri.parse(url))) {
-                            Fluttertoast.showToast(
-                                msg: "Opening $url",
-                                gravity: ToastGravity.BOTTOM);
-                            await launchUrl(Uri.parse(url));
-                            return true;
-                          } else {
-                            return false;
-                          }
-                        })),
+                          widget.statuses[i].reblog != null
+                              ? widget.statuses[i].reblog!.spoilerText != ""
+                                  ? widget.statuses[i].reblog!.spoilerText
+                                  : widget.statuses[i].reblog!.content
+                              : widget.statuses[i].spoilerText != ""
+                                  ? widget.statuses[i].spoilerText
+                                  : widget.statuses[i].content,
+                          onTapUrl: (url) async {
+                            if (await canLaunchUrl(Uri.parse(url))) {
+                              Fluttertoast.showToast(
+                                  msg: "Opening $url",
+                                  gravity: ToastGravity.BOTTOM);
+                              await launchUrl(Uri.parse(url));
+                              return true;
+                            } else {
+                              return false;
+                            }
+                          },
+                          customWidgetBuilder: (element) {
+                            if (element.localName == "a" &&
+                                element.children.length == 1 &&
+                                (element.innerHtml.startsWith("#") ||
+                                    element.innerHtml.startsWith("@"))) {
+                              final displayText = element.innerHtml[0] +
+                                  element.children[0].innerHtml;
+                              return InlineCustomWidget(
+                                  child: GestureDetector(
+                                      onTap: () {
+                                        Fluttertoast.showToast(
+                                            msg: "Unimplemented: $displayText");
+                                      },
+                                      child: Text(displayText,
+                                          style: TextStyle(
+                                            decoration:
+                                                TextDecoration.underline,
+                                          ))));
+                            }
+
+                            return null;
+                          },
+                        )),
                         Visibility(
                             visible: (widget.statuses[i].spoilerText != "" ||
                                     (widget.statuses[i].reblog != null &&

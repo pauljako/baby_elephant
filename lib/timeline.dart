@@ -321,7 +321,20 @@ class _TimelinePageState extends State<TimelinePage> {
                                                     .size
                                                     .width -
                                                 20)))
-                            ]))
+                            ])),
+                        Row(children: [
+                          Icon(widget.statuses[i].reblog != null
+                              ? (widget.statuses[i].reblog!.isFavourited!
+                                  ? Icons.star
+                                  : Icons.star_border)
+                              : (widget.statuses[i].isFavourited!
+                                  ? Icons.star
+                                  : Icons.star_border)),
+                          Text(widget.statuses[i].reblog != null
+                              ? widget.statuses[i].reblog!.favouritesCount
+                                  .toString()
+                              : widget.statuses[i].favouritesCount.toString())
+                        ]),
                       ]))),
               itemCount: widget.statuses.length,
             ),

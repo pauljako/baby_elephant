@@ -116,6 +116,17 @@ class _TimelinePageState extends State<TimelinePage> {
     updateTimeline(false);
   }
 
+  String parseEmojis(String originalContent, List<mApi.Emoji> emojis) {
+    var parsed = originalContent;
+
+    for (var emoji in emojis) {
+      parsed = parsed.replaceAll(":${emoji.code}:",
+          '<img src="${emoji.url}" loading="lazy" alt=":${emoji.code}:" title=":${emoji.code}:" style="width: 24px; height: 24px; margin: -3px 0 0; font-size: inherit; vertical-align: middle; object-fit: contain;">'); // These Attributes are mostly stolen from the Mastodon WebUI
+    }
+
+    return parsed;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -219,13 +230,17 @@ class _TimelinePageState extends State<TimelinePage> {
                         const SizedBox(height: 10),
                         Center(
                             child: HtmlWidget(
-                          widget.statuses[i].reblog != null
-                              ? widget.statuses[i].reblog!.spoilerText != ""
-                                  ? widget.statuses[i].reblog!.spoilerText
-                                  : widget.statuses[i].reblog!.content
-                              : widget.statuses[i].spoilerText != ""
-                                  ? widget.statuses[i].spoilerText
-                                  : widget.statuses[i].content,
+                          parseEmojis(
+                              widget.statuses[i].reblog != null
+                                  ? widget.statuses[i].reblog!.spoilerText != ""
+                                      ? widget.statuses[i].reblog!.spoilerText
+                                      : widget.statuses[i].reblog!.content
+                                  : widget.statuses[i].spoilerText != ""
+                                      ? widget.statuses[i].spoilerText
+                                      : widget.statuses[i].content,
+                              widget.statuses[i].reblog != null
+                                  ? widget.statuses[i].reblog!.emojis
+                                  : widget.statuses[i].emojis),
                           onTapUrl: (url) async {
                             if (await canLaunchUrl(Uri.parse(url))) {
                               Fluttertoast.showToast(

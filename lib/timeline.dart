@@ -87,13 +87,14 @@ class _TimelinePageState extends State<TimelinePage> {
             if (mounted)
               {
                 setState(() {
-                  for (var status in timeline.data.reversed) {
-                    if (refresh) {
+                  if (refresh) {
+                    for (var status in timeline.data.reversed) {
                       widget.statuses.insert(0, status);
-                    } else {
-                      widget.statuses.add(status);
                     }
+                  } else {
+                    widget.statuses.addAll(timeline.data);
                   }
+
                   if (refresh) {
                     refreshController.refreshCompleted();
                   } else {

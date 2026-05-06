@@ -323,17 +323,98 @@ class _TimelinePageState extends State<TimelinePage> {
                                                 20)))
                             ])),
                         Row(children: [
-                          Icon(widget.statuses[i].reblog != null
-                              ? (widget.statuses[i].reblog!.isFavourited!
-                                  ? Icons.star
-                                  : Icons.star_border)
-                              : (widget.statuses[i].isFavourited!
-                                  ? Icons.star
-                                  : Icons.star_border)),
-                          Text(widget.statuses[i].reblog != null
-                              ? widget.statuses[i].reblog!.favouritesCount
-                                  .toString()
-                              : widget.statuses[i].favouritesCount.toString())
+                          ((widget.statuses[i].reblog != null
+                                  ? (widget.statuses[i].reblog!.isFavourited!
+                                      ? true
+                                      : false)
+                                  : (widget.statuses[i].isFavourited!
+                                      ? true
+                                      : false))
+                              ? IconButton(
+                                  icon: Icon(Icons.star, color: Colors.yellow),
+                                  onPressed: () {
+                                    widget.mastodon.v1.statuses
+                                        .destroyFavourite(
+                                            statusId: widget
+                                                        .statuses[i].reblog !=
+                                                    null
+                                                ? widget.statuses[i].reblog!.id
+                                                : widget.statuses[i].id)
+                                        .then((status) {
+                                      setState(() {
+                                        widget.statuses[i] = status.data;
+                                      });
+                                    });
+                                  })
+                              : IconButton(
+                                  icon: Icon(Icons.star_border,
+                                      color: Colors.grey),
+                                  onPressed: () {
+                                    widget.mastodon.v1.statuses
+                                        .createFavourite(
+                                            statusId: widget
+                                                        .statuses[i].reblog !=
+                                                    null
+                                                ? widget.statuses[i].reblog!.id
+                                                : widget.statuses[i].id)
+                                        .then((status) {
+                                      setState(() {
+                                        widget.statuses[i] = status.data;
+                                      });
+                                    });
+                                  })),
+                          Text(
+                              widget.statuses[i].reblog != null
+                                  ? widget.statuses[i].reblog!.favouritesCount
+                                      .toString()
+                                  : widget.statuses[i].favouritesCount
+                                      .toString(),
+                              style: TextStyle(color: Colors.grey)),
+                          ((widget.statuses[i].reblog != null
+                                  ? (widget.statuses[i].reblog!.isReblogged!
+                                      ? true
+                                      : false)
+                                  : (widget.statuses[i].isReblogged!
+                                      ? true
+                                      : false))
+                              ? IconButton(
+                                  icon: Icon(Icons.repeat, color: Colors.blue),
+                                  onPressed: () {
+                                    widget.mastodon.v1.statuses
+                                        .destroyReblog(
+                                            statusId: widget
+                                                        .statuses[i].reblog !=
+                                                    null
+                                                ? widget.statuses[i].reblog!.id
+                                                : widget.statuses[i].id)
+                                        .then((status) {
+                                      setState(() {
+                                        widget.statuses[i] = status.data;
+                                      });
+                                    });
+                                  })
+                              : IconButton(
+                                  icon: Icon(Icons.repeat, color: Colors.grey),
+                                  onPressed: () {
+                                    widget.mastodon.v1.statuses
+                                        .createReblog(
+                                            statusId: widget
+                                                        .statuses[i].reblog !=
+                                                    null
+                                                ? widget.statuses[i].reblog!.id
+                                                : widget.statuses[i].id)
+                                        .then((status) {
+                                      setState(() {
+                                        widget.statuses[i] = status.data;
+                                      });
+                                    });
+                                  })),
+                          Text(
+                              widget.statuses[i].reblog != null
+                                  ? widget.statuses[i].reblog!.reblogsCount
+                                      .toString()
+                                  : widget.statuses[i].reblogsCount.toString(),
+                              style: TextStyle(color: Colors.grey)),
                         ]),
                       ]))),
               itemCount: widget.statuses.length,
